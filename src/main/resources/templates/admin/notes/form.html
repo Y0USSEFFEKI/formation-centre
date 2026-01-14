@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 th:text="${formTitle}">Ajouter une note</h2>
+
+    <form th:action="@{/admin/notes/save}" th:object="${note}" method="post" class="mt-4">
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" name="coursId" th:value="${coursId}"/>
+        <input type="hidden" name="groupeId" th:value="${groupeId}"/>
+
+        <div class="mb-3">
+            <label class="form-label">Cours</label>
+            <input class="form-control"
+                   th:value="${cours != null ? cours.code + ' - ' + cours.title : ''}"
+                   readonly>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Groupe</label>
+            <input class="form-control"
+                   th:value="${groupe != null ? groupe.nom : ''}"
+                   readonly>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Etudiant</label>
+            <select class="form-select" th:field="*{etudiant}" required>
+                <option value="">-- Choisir un etudiant --</option>
+                <option th:each="e : ${etudiants}"
+                        th:value="${e.id}"
+                        th:text="${e.matricule + ' - ' + e.prenom + ' ' + e.nom}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Valeur</label>
+            <input type="number" step="0.01" class="form-control" th:field="*{valeur}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Type</label>
+            <input class="form-control" th:field="*{type}" placeholder="exam, td, ..." required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+        <a class="btn btn-secondary"
+           th:href="@{'/admin/notes?coursId=' + ${coursId} + '&groupeId=' + ${groupeId}}">
+            Annuler
+        </a>
+    </form>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>

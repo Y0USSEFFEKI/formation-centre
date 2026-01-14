@@ -1,0 +1,63 @@
+<section class="page-header">
+  <div>
+    <h1>Liste des cours</h1>
+    <p>Choisissez une specialité, puis inscrivez-vous aux cours.</p>
+  </div>
+  <div class="filter-bar">
+    <button
+      class="chip"
+      [class.active]="selectedSpecialiteId === null"
+      (click)="selectSpecialite(null)"
+    >
+      Toutes
+    </button>
+    <button
+      class="chip"
+      *ngFor="let spec of specialites"
+      [class.active]="selectedSpecialiteId === spec.id"
+      (click)="selectSpecialite(spec.id)"
+    >
+      {{ spec.name }}
+    </button>
+  </div>
+</section>
+
+<div class="status" *ngIf="loading && !error && specialites.length === 0">Chargement des cours...</div>
+<div class="status error" *ngIf="error">{{ error }}</div>
+<div class="status" *ngIf="!loading && !error && specialites.length === 0">
+  Aucune specialite disponible.
+</div>
+
+<section class="specialites" *ngIf="!error && specialites.length > 0">
+  <div class="specialite-block" *ngFor="let spec of visibleSpecialites(); let i = index">
+    <div class="specialite-header">
+      <h2>{{ spec.name }}</h2>
+      <span>{{ coursBySpecialite(spec.id).length }} cours</span>
+    </div>
+
+    <div class="course-grid">
+      <div
+        class="course-card fade-rise"
+        *ngFor="let c of coursBySpecialite(spec.id); let j = index"
+        [style.animationDelay]="(j * 60) + 'ms'"
+      >
+        <span class="status-badge" *ngIf="isEnrolled(c.id)">Inscrit</span>
+        <div class="course-meta">{{ c.code }}</div>
+        <h3>{{ c.title }}</h3>
+        <p>Specialité : {{ spec.name }}</p>
+        <button
+          class="btn"
+          [class.btn-primary]="!isEnrolled(c.id)"
+          [class.btn-cancel]="isEnrolled(c.id)"
+          (click)="toggleEnrollment(c.id)"
+        >
+          {{ isEnrolled(c.id) ? "Annuler l'inscription" : "S'inscrire" }}
+        </button>
+      </div>
+    </div>
+
+    <div class="empty" *ngIf="!loading && coursBySpecialite(spec.id).length === 0">
+      Aucun cours pour cette specialite.
+    </div>
+  </div>
+</section>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 th:text="${formTitle}">Ajouter un formateur</h2>
+
+    <form th:action="@{/admin/formateurs/save}" th:object="${formateur}" method="post" class="mt-4">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="mb-3">
+            <label class="form-label">Prenom</label>
+            <input class="form-control" th:field="*{prenom}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <input class="form-control" th:field="*{nom}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" th:field="*{email}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Specialites</label>
+            <select class="form-select" th:field="*{specialties}" multiple>
+                <option th:each="s : ${specialites}"
+                        th:value="${s.id}"
+                        th:text="${s.name}">
+                </option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+        <a th:href="@{/admin/formateurs}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>

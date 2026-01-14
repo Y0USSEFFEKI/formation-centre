@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Liste des notes</h2>
+
+    <div class="d-flex gap-2 mb-3">
+        <a class="btn btn-primary"
+           th:if="${showNotes}"
+           th:href="@{'/admin/notes/create?coursId=' + ${selectedCoursId} + '&groupeId=' + ${selectedGroupeId}}">
+            + Ajouter une note
+        </a>
+        <button class="btn btn-primary" th:if="${!showNotes}" disabled>+ Ajouter une note</button>
+
+        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">
+            Filtrer
+        </button>
+    </div>
+
+    <div class="text-center text-muted py-5" th:if="${!showNotes}">
+        Veuillez remplir le formulaire de filtre pour afficher la liste des notes.
+    </div>
+
+    <div th:if="${showNotes}">
+        <div class="text-muted mb-3" th:if="${#lists.isEmpty(notes)}">
+            Aucune note pour ce filtre.
+        </div>
+
+        <table class="table table-striped" th:if="${!#lists.isEmpty(notes)}">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Etudiant</th>
+                <th>Cours</th>
+                <th>Groupe</th>
+                <th>Valeur</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="n : ${notes}">
+                <td th:text="${n.id}"></td>
+                <td th:text="${n.etudiant != null ? n.etudiant.prenom + ' ' + n.etudiant.nom : '-'}"></td>
+                <td th:text="${n.cours != null ? n.cours.title : '-'}"></td>
+                <td th:text="${n.etudiant != null && n.etudiant.groupe != null ? n.etudiant.groupe.nom : '-'}"></td>
+                <td th:text="${n.valeur}"></td>
+                <td th:text="${n.type}"></td>
+                <td>
+                    <a class="btn btn-sm btn-warning"
+                       th:href="@{'/admin/notes/edit/' + ${n.id}}">Editer</a>
+
+                    <a class="btn btn-sm btn-danger"
+                       th:href="@{'/admin/notes/delete/' + ${n.id} + '?coursId=' + ${selectedCoursId} + '&groupeId=' + ${selectedGroupeId}}"
+                       onclick="return confirm('Supprimer cette note ?')">
+                        Supprimer
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal filtre -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" th:action="@{/admin/notes}" method="get">
+            <div class="modal-header">
+                <h5 class="modal-title">Filtrer les notes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Specialite</label>
+                    <select id="specialiteSelect" name="specialiteId" class="form-select" required>
+                        <option value="">-- Choisir une specialite --</option>
+                        <option th:each="s : ${specialites}"
+                                th:value="${s.id}"
+                                th:text="${s.name}"
+                                th:selected="${s.id == selectedSpecialiteId}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Cours</label>
+                    <select id="coursSelect" name="coursId" class="form-select" required>
+                        <option value="">-- Choisir un cours --</option>
+                        <option th:each="c : ${coursAll}"
+                                th:value="${c.id}"
+                                th:text="${c.code + ' - ' + c.title}"
+                                th:attr="data-specialite=${c.specialty != null ? c.specialty.id : ''}"
+                                th:selected="${c.id == selectedCoursId}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Groupe</label>
+                    <select id="groupeSelect" name="groupeId" class="form-select" required>
+                        <option value="">-- Choisir un groupe --</option>
+                        <option th:each="g : ${groupesAll}"
+                                th:value="${g.id}"
+                                th:text="${g.nom}"
+                                th:attr="data-specialite=${g.specialite != null ? g.specialite.id : ''}"
+                                th:selected="${g.id == selectedGroupeId}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Afficher la liste</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+<script>
+(function () {
+    var specialiteSelect = document.getElementById('specialiteSelect');
+    var coursSelect = document.getElementById('coursSelect');
+    var groupeSelect = document.getElementById('groupeSelect');
+
+    function filterBySpecialite(select, specialiteId) {
+        Array.prototype.forEach.call(select.options, function (opt) {
+            var sp = opt.getAttribute('data-specialite');
+            if (!sp) {
+                opt.hidden = opt.value !== '';
+                return;
+            }
+            opt.hidden = !specialiteId || sp !== specialiteId;
+        });
+
+        if (select.value && select.selectedOptions.length && select.selectedOptions[0].hidden) {
+            select.value = '';
+        }
+    }
+
+    function applyFilter() {
+        var specialiteId = specialiteSelect.value;
+        filterBySpecialite(coursSelect, specialiteId);
+        filterBySpecialite(groupeSelect, specialiteId);
+    }
+
+    if (specialiteSelect) {
+        specialiteSelect.addEventListener('change', applyFilter);
+        applyFilter();
+    }
+})();
+</script>
+
+</body>
+</html>

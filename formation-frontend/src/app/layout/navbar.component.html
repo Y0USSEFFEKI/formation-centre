@@ -1,0 +1,29 @@
+<nav class="top-nav">
+  <div class="nav-brand">
+    <span class="dot"></span>
+    Centre Formation
+  </div>
+
+  <div class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Accueil
+    </a>
+    <a *ngIf="!role.includes('FORMATEUR')" routerLink="/courses" routerLinkActive="active">Liste des cours</a>
+  </div>
+
+  <div class="nav-actions">
+    <div class="avatar" (click)="toggleMenu()">
+      <ng-container *ngIf="(profile$ | async) as profile; else fallback">
+        {{ initials(profile.prenom, profile.nom) }}
+      </ng-container>
+      <ng-template #fallback>
+        {{ initials(undefined, undefined, fullnameFallback()) }}
+      </ng-template>
+    </div>
+
+    <div class="menu" *ngIf="menuOpen">
+      <a routerLink="/dashboard" (click)="toggleMenu()">Dashboard</a>
+      <button type="button" (click)="logout()">Deconnexion</button>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,282 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+}
+
+.sidebar {
+  background: #fff;
+  border-radius: 22px;
+  padding: 0;
+  box-shadow: var(--shadow-soft);
+  height: fit-content;
+  position: sticky;
+  top: 24px;
+  width: 280px;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 8px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-link {
+  all: unset;
+  display: block;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  border: none;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 88%;
+
+  &:hover {
+    background: rgba(42, 168, 156, 0.05);
+  }
+
+  &.active {
+    background: var(--accent-1);
+    color: var(--ink);
+    font-weight: 600;
+  }
+}
+
+.content {
+  min-width: 0;
+}
+
+.section {
+  background: #fff;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: var(--shadow-soft);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.section-header span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.profile-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+}
+
+input {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.profile-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.saved {
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.course-list {
+  display: grid;
+  gap: 12px;
+}
+
+.groupe-list {
+  display: grid;
+  gap: 12px;
+}
+
+.course-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(42, 168, 156, 0.1);
+}
+
+.groupe-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(42, 168, 156, 0.1);
+}
+
+.course-item p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.course-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.groupe-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.course-notes {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.note-item {
+  display: grid;
+  gap: 4px;
+  min-width: 70px;
+  text-align: center;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(42, 168, 156, 0.08);
+  border: 1px solid rgba(42, 168, 156, 0.2);
+}
+
+.note-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+}
+
+.note-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-1);
+}
+
+.schedule-table {
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.6);
+  overflow-x: auto;
+}
+
+.schedule-row {
+  display: grid;
+  grid-template-columns: 90px repeat(3, minmax(180px, 1fr));
+  min-width: 720px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.schedule-row.header {
+  border-top: none;
+  background: rgba(228, 107, 44, 0.08);
+}
+
+.corner,
+.slot,
+.day-label {
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.slot {
+  text-align: center;
+}
+
+.day-label {
+  background: rgba(42, 168, 156, 0.08);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.slot-cell {
+  min-height: 90px;
+  padding: 10px;
+  border-left: 1px solid rgba(0, 0, 0, 0.06);
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.session-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 8px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+  display: grid;
+  gap: 6px;
+}
+
+.session-title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.session-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.session-empty {
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.4);
+  font-style: italic;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 14px;
+}

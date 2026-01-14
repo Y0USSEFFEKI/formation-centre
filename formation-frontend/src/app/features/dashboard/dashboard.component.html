@@ -1,0 +1,167 @@
+<section class="dashboard">
+  <nav class="sidebar">
+    <ul class="nav-links">
+      <li>
+        <button
+          class="nav-link"
+          [class.active]="activeTab === 'profile'"
+          (click)="selectTab('profile')"
+        >
+          Coordonnées personnelles
+        </button>
+      </li>
+      <li>
+        <button
+          class="nav-link"
+          [class.active]="isFormateur ? activeTab === 'groupes' : activeTab === 'courses'"
+          (click)="selectTab(isFormateur ? 'groupes' : 'courses')"
+        >
+          {{ isFormateur ? 'Mes groupes' : 'Mes cours' }}
+        </button>
+      </li>
+      <li>
+        <button
+          class="nav-link"
+          [class.active]="activeTab === 'schedule'"
+          (click)="selectTab('schedule')"
+        >
+          Emploi du temps
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="content">
+    <!-- Profile Tab -->
+    <div class="section profile" *ngIf="activeTab === 'profile'">
+      <div class="section-header">
+        <h2>Profil</h2>
+        <span>Coordonnées personnelles</span>
+      </div>
+
+      <div *ngIf="loadingProfile" class="loading">Chargement du profil…</div>
+
+    <div *ngIf="!loadingProfile && profileMessage" class="error">{{ profileMessage }}</div>
+
+    <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <label>
+          Prénom
+          <input type="text" formControlName="prenom" />
+        </label>
+        <label>
+          Nom
+          <input type="text" formControlName="nom" />
+        </label>
+        <label>
+          Email
+          <input type="email" formControlName="email" />
+        </label>
+
+        <div class="profile-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="saving">
+            {{ saving ? 'Sauvegarde...' : 'Mettre a jour' }}
+          </button>
+          <span class="saved" *ngIf="savedMessage">{{ savedMessage }}</span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Courses Tab (Etudiant) -->
+    <div class="section courses" *ngIf="activeTab === 'courses' && !isFormateur">
+      <div class="section-header">
+        <h2>Mes cours</h2>
+        <span>Vos inscriptions actives</span>
+      </div>
+
+      <div class="course-list" *ngIf="myCourses.length > 0; else emptyCourses">
+        <div class="course-item" *ngFor="let c of myCourses">
+          <div>
+            <strong>{{ c.title }}</strong>
+            <p>{{ c.code }}</p>
+          </div>
+          <div class="course-notes">
+            <div class="note-item">
+              <span class="note-label">DS</span>
+              <span class="note-value">{{ noteValue(c.id, 'ds') }}</span>
+            </div>
+            <div class="note-item">
+              <span class="note-label">EXAM</span>
+              <span class="note-value">{{ noteValue(c.id, 'exam') }}</span>
+            </div>
+          </div>
+          <div class="course-actions">
+            <span class="pill">{{ c.specialiteName || 'Specialite' }}</span>
+            <button class="btn btn-cancel" type="button" (click)="cancelEnrollment(c.id)">
+              Annuler l'inscription
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyCourses>
+        <p class="empty">Aucun cours inscrit pour le moment.</p>
+      </ng-template>
+    </div>
+
+    <!-- Groupes Tab (Formateur) -->
+    <div class="section groupes" *ngIf="activeTab === 'groupes' && isFormateur">
+      <div class="section-header">
+        <h2>Mes groupes</h2>
+        <span>Groupes inscrits à vos cours</span>
+      </div>
+
+      <div *ngIf="loadingGroupes" class="loading">Chargement des groupes…</div>
+
+      <div class="groupe-list" *ngIf="!loadingGroupes && myGroupes.length > 0">
+        <div class="groupe-item" *ngFor="let g of myGroupes">
+          <div>
+            <strong>{{ g.nom }}</strong>
+          </div>
+          <div class="groupe-info">
+            <span class="pill">{{ g.specialiteName || 'Specialite' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loadingGroupes && myGroupes.length === 0" class="empty">{{ groupesMessage || 'Aucun groupe assigné pour le moment.' }}</div>
+    </div>
+
+    <!-- Schedule Tab -->
+    <div class="section schedule" *ngIf="activeTab === 'schedule'">
+      <div class="section-header">
+        <h2>{{ isFormateur ? 'Emploi du temps' : 'Emploi du temps' }}</h2>
+        <span>{{ isFormateur ? 'Vos séances par groupe' : 'Horaires fixes chaque semaine' }}</span>
+      </div>
+
+      <div class="schedule-table" *ngIf="schedule.length > 0; else emptySchedule">
+        <div class="schedule-row header">
+          <div class="corner">Jour</div>
+          <div class="slot" *ngFor="let slot of timeSlots">{{ slot.label }}</div>
+        </div>
+
+        <div class="schedule-row" *ngFor="let day of schedule">
+          <div class="day-label">{{ day.day }}</div>
+          <div class="slot-cell" *ngFor="let cell of day.slots">
+            <div
+              class="session-card fade-rise"
+              *ngFor="let s of cell.sessions; let k = index"
+              [style.animationDelay]="(k * 40) + 'ms'"
+            >
+              <div class="session-title">{{ s.cours?.title || 'Cours' }}</div>
+              <div class="session-meta">
+                <span>{{ formatTime(s.heureDebut) }} - {{ formatTime(s.heureFin) }}</span>
+                <span *ngIf="s.salle">Salle {{ s.salle }}</span>
+              </div>
+            </div>
+
+            <div class="session-empty" *ngIf="cell.sessions.length === 0">Libre</div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptySchedule>
+        <p class="empty">Aucune séance programmée.</p>
+      </ng-template>
+    </div>
+  </div>
+</section>

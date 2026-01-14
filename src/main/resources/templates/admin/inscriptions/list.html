@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Liste des inscriptions</h2>
+
+    <a class="btn btn-primary mb-3" th:href="@{/admin/inscriptions/create}">
+        + Ajouter une inscription
+    </a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Etudiant</th>
+            <th>Cours</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="i : ${inscriptions}">
+            <td th:text="${i.id}"></td>
+            <td th:text="${i.etudiant != null ? i.etudiant.prenom + ' ' + i.etudiant.nom : '-'}"></td>
+            <td th:text="${i.cours != null ? i.cours.code + ' - ' + i.cours.title : '-'}"></td>
+            <td th:text="${i.date}"></td>
+            <td>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{'/admin/inscriptions/edit/' + ${i.id}}">Editer</a>
+                <a class="btn btn-sm btn-danger"
+                   th:href="@{'/admin/inscriptions/delete/' + ${i.id}}"
+                   onclick="return confirm('Supprimer cette inscription ?')">
+                    Supprimer
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>

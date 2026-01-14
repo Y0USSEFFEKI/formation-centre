@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Liste des cours</h2>
+
+    <a class="btn btn-primary mb-3" th:href="@{/admin/cours/create}">
+        + Ajouter un cours
+    </a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Titre</th>
+            <th>Heures</th>
+            <th>Specialite</th>
+            <th>Formateur</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="c : ${cours}">
+            <td th:text="${c.id}"></td>
+            <td th:text="${c.code}"></td>
+            <td th:text="${c.title}"></td>
+            <td th:text="${c.hours}"></td>
+            <td th:text="${c.specialty != null ? c.specialty.name : '-'}"></td>
+            <td th:text="${c.formateur != null ? c.formateur.prenom + ' ' + c.formateur.nom : '-'}"></td>
+            <td>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{'/admin/cours/edit/' + ${c.id}}">Editer</a>
+                <a class="btn btn-sm btn-danger"
+                   th:href="@{'/admin/cours/delete/' + ${c.id}}"
+                   onclick="return confirm('Supprimer ce cours ?')">
+                    Supprimer
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>

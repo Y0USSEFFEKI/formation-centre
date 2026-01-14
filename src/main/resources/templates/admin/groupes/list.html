@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Liste des groupes</h2>
+
+    <a class="btn btn-primary mb-3" th:href="@{/admin/groupes/create}">
+        + Ajouter un groupe
+    </a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Specialite</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="g : ${groupes}">
+            <td th:text="${g.id}"></td>
+            <td th:text="${g.nom}"></td>
+            <td th:text="${g.specialite != null ? g.specialite.name : '-'}"></td>
+            <td>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{'/admin/groupes/edit/' + ${g.id}}">Editer</a>
+
+                <a class="btn btn-sm btn-danger"
+				   th:href="@{'/admin/groupes/delete/' + ${g.id}}"
+				   onclick="return confirm('Supprimer ce groupe ?')">
+				    Supprimer
+				</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>

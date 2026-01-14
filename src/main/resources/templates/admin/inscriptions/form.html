@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 th:text="${formTitle}">Ajouter une inscription</h2>
+
+    <form th:action="@{/admin/inscriptions/save}" th:object="${inscription}" method="post" class="mt-4">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="mb-3">
+            <label class="form-label">Etudiant</label>
+            <select class="form-select" th:field="*{etudiant}" required>
+                <option value="">-- Choisir un etudiant --</option>
+                <option th:each="e : ${etudiants}"
+                        th:value="${e.id}"
+                        th:text="${e.matricule + ' - ' + e.prenom + ' ' + e.nom}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Cours</label>
+            <select class="form-select" th:field="*{cours}" required>
+                <option value="">-- Choisir un cours --</option>
+                <option th:each="c : ${coursList}"
+                        th:value="${c.id}"
+                        th:text="${c.code + ' - ' + c.title}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control" th:field="*{date}" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+        <a th:href="@{/admin/inscriptions}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>

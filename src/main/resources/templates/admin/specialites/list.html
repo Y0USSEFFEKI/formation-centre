@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Liste des specialites</h2>
+
+    <a class="btn btn-primary mb-3" th:href="@{/admin/specialites/create}">
+        + Ajouter une specialite
+    </a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="s : ${specialites}">
+            <td th:text="${s.id}"></td>
+            <td th:text="${s.name}"></td>
+            <td>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{'/admin/specialites/edit/' + ${s.id}}">Editer</a>
+                <a class="btn btn-sm btn-danger"
+                   th:href="@{'/admin/specialites/delete/' + ${s.id}}"
+                   onclick="return confirm('Supprimer cette specialite ?')">
+                    Supprimer
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>

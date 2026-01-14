@@ -1,0 +1,59 @@
+<section class="hero">
+  <div class="hero-text fade-rise">
+    <h1>Centre de formation, rythme humain, parcours clairs.</h1>
+    <p>
+      Une experience simple pour organiser vos cours, votre profil et votre emploi
+      du temps. Chaque semaine, un cadre stable pour progresser sans friction.
+    </p>
+    <div class="hero-actions">
+      <a *ngIf="!isFormateur" class="btn btn-primary" routerLink="/courses">Voir les cours</a>
+      <a class="btn btn-ghost" routerLink="/dashboard">Mon dashboard</a>
+    </div>
+  </div>
+  <div class="hero-card fade-rise delay-1">
+    <div class="card-top">
+      <span class="tag">Génie Informatique</span>
+      <span class="meta">Session ouverte</span>
+    </div>
+    <h3>Apprendre par projets</h3>
+    <p>
+      Des cours orientés terrain, avec un suivi régulier et des ressources
+      centralisées.
+    </p>
+    <div class="card-grid">
+      <div>
+        <strong>12</strong>
+        <span>Cours actifs</span>
+      </div>
+      <div>
+        <strong>6</strong>
+        <span>Specialites</span>
+      </div>
+      <div>
+        <strong>24/7</strong>
+        <span>Support</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="info-grid">
+  <div class="info-card">
+    <h4>Une vision claire</h4>
+    <p>
+      Chaque cours est relie a une specialite, pour un parcours lisible et motive.
+    </p>
+  </div>
+  <div class="info-card">
+    <h4>Un suivi rigoureux</h4>
+    <p>
+      Votre dashboard centralise cours, planning et informations personnelles.
+    </p>
+  </div>
+  <div class="info-card">
+    <h4>Une progression sereine</h4>
+    <p>
+      Des horaires fixes et une organisation stable pour garder le cap.
+    </p>
+  </div>
+</section>

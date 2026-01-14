@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 th:text="${formTitle}">Ajouter une seance</h2>
+
+    <form th:action="@{/admin/seances/save}" th:object="${seance}" method="post" class="mt-4">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="mb-3">
+            <label class="form-label">Cours</label>
+            <select class="form-select" th:field="*{cours}" id="coursSelect">
+                <option value="">-- Choisir un cours --</option>
+                <option th:each="c : ${coursList}"
+                        th:value="${c.id}"
+                        th:text="${c.code + ' - ' + c.title}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Groupe</label>
+            <select class="form-select" th:field="*{groupe}">
+                <option value="">-- Choisir un groupe --</option>
+                <option th:each="g : ${groupes}"
+                        th:value="${g.id}"
+                        th:text="${g.nom}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Formateur</label>
+            <select class="form-select" th:field="*{formateur}">
+                <option value="">-- Choisir un formateur --</option>
+                <option th:each="f : ${formateurs}"
+                        th:value="${f.id}"
+                        th:text="${f.prenom + ' ' + f.nom}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Heure debut</label>
+            <input type="datetime-local" class="form-control" th:field="*{heureDebut}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Heure fin</label>
+            <input type="datetime-local" class="form-control" th:field="*{heureFin}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Salle</label>
+            <input class="form-control" th:field="*{salle}" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+        <a th:href="@{/admin/seances}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+<script>
+(function () {
+    var select = document.getElementById('coursSelect');
+    if (!select) return;
+    select.addEventListener('change', function () {
+        var url = new URL(window.location.href);
+        if (this.value) {
+            url.searchParams.set('coursId', this.value);
+        } else {
+            url.searchParams.delete('coursId');
+        }
+        window.location.href = url.toString();
+    });
+})();
+</script>
+
+</body>
+</html>

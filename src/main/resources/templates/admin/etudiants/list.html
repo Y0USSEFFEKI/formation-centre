@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Liste des Étudiants</h2>
+
+    <a class="btn btn-primary mb-3" th:href="@{/admin/etudiants/create}">
+        + Ajouter un étudiant
+    </a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Matricule</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Date de naissance</th>
+            <th>Groupe</th>       
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="e : ${etudiants}">
+            <td th:text="${e.id}"></td>
+            <td th:text="${e.matricule}"></td>
+            <td th:text="${e.prenom + ' ' + e.nom}"></td>
+            <td th:text="${e.email}"></td>
+            <td th:text="${e.dateNaissance}"></td>
+            <td th:text="${e.groupe != null ? e.groupe.nom : '-'}"></td>
+            
+            <td>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{'/admin/etudiants/edit/' + ${e.id}}">Editer</a>
+
+                <a class="btn btn-sm btn-danger"
+				   th:href="@{'/admin/etudiants/delete/' + ${e.id}}"
+				   onclick="return confirm('Supprimer cet etudiant ?')">
+				    Supprimer
+				</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>

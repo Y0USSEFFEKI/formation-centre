@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Liste des seances</h2>
+
+    <a class="btn btn-primary mb-3" th:href="@{/admin/seances/create}">
+        + Ajouter une seance
+    </a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cours</th>
+            <th>Formateur</th>
+            <th>Groupe</th>
+            <th>Debut</th>
+            <th>Fin</th>
+            <th>Salle</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="s : ${seances}">
+            <td th:text="${s.id}"></td>
+            <td th:text="${s.cours != null ? s.cours.title : '-'}"></td>
+            <td th:text="${s.formateur != null ? s.formateur.prenom + ' ' + s.formateur.nom : '-'}"></td>
+            <td th:text="${s.groupe != null ? s.groupe.nom : '-'}"></td>
+            <td th:text="${s.heureDebut}"></td>
+            <td th:text="${s.heureFin}"></td>
+            <td th:text="${s.salle}"></td>
+            <td>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{'/admin/seances/edit/' + ${s.id}}">Editer</a>
+                <a class="btn btn-sm btn-danger"
+                   th:href="@{'/admin/seances/delete/' + ${s.id}}"
+                   onclick="return confirm('Supprimer cette seance ?')">
+                    Supprimer
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>

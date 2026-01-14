@@ -1,0 +1,75 @@
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-brand">Centre Formation</div>
+    <h1>Inscription</h1>
+    <p class="auth-subtitle">
+      Creez votre espace et accedez aux cours.
+    </p>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="grid-two">
+        <label>
+          Prenom
+          <input type="text" formControlName="prenom" />
+        </label>
+
+        <label>
+          Nom
+          <input type="text" formControlName="nom" />
+        </label>
+      </div>
+
+      <label>
+        Email
+        <input type="email" formControlName="email" />
+      </label>
+
+      <div class="grid-two">
+        <label>
+          Identifiant
+          <input type="text" formControlName="username" />
+        </label>
+
+        <label>
+          Mot de passe
+          <input type="password" formControlName="password" />
+        </label>
+      </div>
+
+      <div class="role-switch">
+        <span>Role</span>
+        <div class="role-options">
+          <label>
+            <input type="radio" value="ETUDIANT" formControlName="role" />
+            Etudiant
+          </label>
+          <label>
+            <input type="radio" value="FORMATEUR" formControlName="role" />
+            Formateur
+          </label>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit" [disabled]="loading">
+        {{ loading ? 'Creation...' : 'Creer le compte' }}
+      </button>
+    </form>
+
+    <div class="auth-error" *ngIf="error">{{ error }}</div>
+
+    <div class="auth-alt">
+      Deja inscrit ?
+      <a routerLink="/login">Se connecter</a>
+    </div>
+  </div>
+
+  <div class="auth-aside">
+    <div class="aside-glow"></div>
+    <div class="aside-content">
+      <h2>Une experience claire et guidée.</h2>
+      <p>
+        Choisissez vos cours, suivez votre planning et avancez a votre rythme.
+      </p>
+    </div>
+  </div>
+</div>

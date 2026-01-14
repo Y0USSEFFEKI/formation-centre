@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"></head>
+
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Liste des formateurs</h2>
+
+    <a class="btn btn-primary mb-3" th:href="@{/admin/formateurs/create}">
+        + Ajouter un formateur
+    </a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Prenom</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Specialites</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="f : ${formateurs}">
+            <td th:text="${f.id}"></td>
+            <td th:text="${f.prenom}"></td>
+            <td th:text="${f.nom}"></td>
+            <td th:text="${f.email}"></td>
+            <td>
+                <span th:each="s, iter : ${f.specialties}"
+                      th:text="${s.name + (iter.last ? '' : ', ')}"></span>
+            </td>
+            <td>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{'/admin/formateurs/edit/' + ${f.id}}">Editer</a>
+                <a class="btn btn-sm btn-danger"
+                   th:href="@{'/admin/formateurs/delete/' + ${f.id}}"
+                   onclick="return confirm('Supprimer ce formateur ?')">
+                    Supprimer
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="fragments/footer :: foot"></footer>
+
+</body>
+</html>
