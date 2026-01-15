@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
@@ -63,7 +64,8 @@ export class DashboardComponent implements OnInit {
     private student: StudentService,
     private formateur: FormateurService,
     private auth: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {
     this.profileForm = this.fb.group({
       prenom: ['', [Validators.required]],
@@ -408,5 +410,9 @@ export class DashboardComponent implements OnInit {
 
   selectTab(tab: 'profile' | 'courses' | 'groupes' | 'schedule') {
     this.activeTab = tab;
+  }
+
+  viewGroupStudents(groupeId: number) {
+    this.router.navigate(['/group', groupeId, 'students']);
   }
 }

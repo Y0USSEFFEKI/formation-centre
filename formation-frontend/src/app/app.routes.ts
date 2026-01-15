@@ -7,6 +7,7 @@ import { StudentLayoutComponent } from './layout/student-layout.component';
 import { HomeComponent } from './features/home/home.component';
 import { CoursesComponent } from './features/courses/courses.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { GroupStudentsComponent } from './features/group-students/group-students.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -19,7 +20,8 @@ export const routes: Routes = [
     children: [
       { path: '', component: HomeComponent },
       { path: 'courses', component: CoursesComponent },
-      { path: 'dashboard', component: DashboardComponent }
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'group/:groupeId/students', component: GroupStudentsComponent }
     ]
   },
   { path: '**', redirectTo: '' }

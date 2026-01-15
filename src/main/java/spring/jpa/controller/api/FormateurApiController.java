@@ -16,6 +16,8 @@ import spring.jpa.repository.CoursRepository;
 import spring.jpa.repository.FormateurRepository;
 import spring.jpa.repository.GroupeRepository;
 import spring.jpa.repository.SeanceRepository;
+import spring.jpa.repository.EtudiantRepository;
+import spring.jpa.repository.NoteRepository;
 import spring.jpa.repository.UserRepository;
 
 import org.slf4j.Logger;
@@ -31,6 +33,8 @@ public class FormateurApiController {
     private final CoursRepository coursRepository;
     private final GroupeRepository groupeRepository;
     private final SeanceRepository seanceRepository;
+    private final EtudiantRepository etudiantRepository;
+    private final NoteRepository noteRepository;
     private final UserRepository userRepository;
 
     private final Logger log = LoggerFactory.getLogger(FormateurApiController.class);
@@ -39,13 +43,19 @@ public class FormateurApiController {
                                   CoursRepository coursRepository,
                                   GroupeRepository groupeRepository,
                                   SeanceRepository seanceRepository,
+                                  EtudiantRepository etudiantRepository,
+                                  NoteRepository noteRepository,
                                   UserRepository userRepository) {
         this.formateurRepository = formateurRepository;
         this.coursRepository = coursRepository;
         this.groupeRepository = groupeRepository;
         this.seanceRepository = seanceRepository;
+        this.etudiantRepository = etudiantRepository;
+        this.noteRepository = noteRepository;
         this.userRepository = userRepository;
     }
+
+    public static record StudentNoteDto(Long id, String prenom, String nom, Double ds, Double examen, Double moyenne) {}
 
     @GetMapping("/me")
     public FormateurProfileDto me() {
@@ -184,6 +194,97 @@ public class FormateurApiController {
                 dto.setCours(cours);
                 return dto;
             }).toList();
+    }
+
+    @GetMapping("/groupes/{groupeId}/etudiants/notes")
+    public Object groupeEtudiantsNotes(@PathVariable Long groupeId, @RequestParam Long coursId) {
+        var etudiants = etudiantRepository.findByGroupe_Id(groupeId);
+        var notes = noteRepository.findByCours_IdAndEtudiant_Groupe_Id(coursId, groupeId);
+
+        var list = etudiants.stream().map(e -> {
+            Double ds = null;
+            Double exam = null;
+            var studentNotes = notes.stream().filter(n -> n.getEtudiant() != null && n.getEtudiant().getId().equals(e.getId())).toList();
+            for (var n : studentNotes) {
+                if (n.getType() != null) {
+                    String t = n.getType().toLowerCase();
+                    if (t.contains("ds")) ds = n.getValeur();
+                    else if (t.contains("exam")) exam = n.getValeur();
+                }
+            }
+            Double moyenne = null;
+            int count = 0; double sum = 0.0;
+            if (ds != null) { sum += ds; count++; }
+            if (exam != null) { sum += exam; count++; }
+            if (count > 0) moyenne = sum / count;
+            return new StudentNoteDto(e.getId(), e.getPrenom(), e.getNom(), ds, exam, moyenne);
+        }).toList();
+
+        double overallAvg = list.stream().filter(s -> s.moyenne() != null).mapToDouble(StudentNoteDto::moyenne).average().orElse(Double.NaN);
+        long passed = list.stream().filter(s -> s.moyenne() != null && s.moyenne() >= 10.0).count();
+        double tauxReussite = list.isEmpty() ? 0.0 : (100.0 * passed / list.size());
+
+        return java.util.Map.of(
+            "etudiants", list,
+            "moyenneGenerale", Double.isNaN(overallAvg) ? null : overallAvg,
+            "tauxReussite", tauxReussite
+        );
+    }
+
+    @GetMapping("/groupes/{groupeId}/etudiants/notes/pdf")
+    public org.springframework.http.ResponseEntity<byte[]> groupeEtudiantsNotesPdf(@PathVariable Long groupeId, @RequestParam Long coursId) {
+        var resp = groupeEtudiantsNotes(groupeId, coursId);
+        @SuppressWarnings("unchecked")
+        var map = (java.util.Map<String, Object>) resp;
+        @SuppressWarnings("unchecked")
+        var list = (java.util.List<StudentNoteDto>) map.get("etudiants");
+        Double moyenneGenerale = (Double) map.get("moyenneGenerale");
+        Double tauxReussite = (Double) map.get("tauxReussite");
+
+        try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+             org.apache.pdfbox.pdmodel.PDDocument doc = new org.apache.pdfbox.pdmodel.PDDocument()) {
+
+            var page = new org.apache.pdfbox.pdmodel.PDPage();
+            doc.addPage(page);
+            try (var cs = new org.apache.pdfbox.pdmodel.PDPageContentStream(doc, page)) {
+                cs.beginText();
+                var font = org.apache.pdfbox.pdmodel.font.PDType1Font.HELVETICA;
+                cs.setFont(font, 12);
+                cs.newLineAtOffset(50, 750);
+                cs.showText("Liste des étudiants - Groupe " + groupeId);
+                cs.newLineAtOffset(0, -18);
+                cs.showText(" ");
+                cs.newLineAtOffset(0, -12);
+
+                // Header
+                cs.showText(String.format("%-30s %-8s %-8s %-8s", "Nom Prenom", "DS", "Exam", "Moy"));
+                cs.newLineAtOffset(0, -14);
+
+                for (var s : list) {
+                    String name = (s.prenom() == null ? "" : s.prenom()) + " " + (s.nom() == null ? "" : s.nom());
+                    String ds = s.ds() == null ? "-" : String.format("%.2f", s.ds());
+                    String ex = s.examen() == null ? "-" : String.format("%.2f", s.examen());
+                    String moy = s.moyenne() == null ? "-" : String.format("%.2f", s.moyenne());
+                    cs.showText(String.format("%-30s %-8s %-8s %-8s", name, ds, ex, moy));
+                    cs.newLineAtOffset(0, -14);
+                }
+
+                cs.newLineAtOffset(0, -12);
+                cs.showText(String.format("Moyenne générale: %s", moyenneGenerale == null ? "-" : String.format("%.2f", moyenneGenerale)));
+                cs.newLineAtOffset(0, -14);
+                cs.showText(String.format("Taux de réussite: %.2f%%", tauxReussite));
+                cs.endText();
+            }
+
+            doc.save(baos);
+            byte[] data = baos.toByteArray();
+            return org.springframework.http.ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=liste_etudiants_groupe_" + groupeId + ".pdf")
+                .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                .body(data);
+        } catch (Exception ex) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR, "Erreur génération PDF", ex);
+        }
     }
 
     private Formateur findFormateurByUsername(String username) {

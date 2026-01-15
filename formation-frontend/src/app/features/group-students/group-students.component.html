@@ -1,0 +1,48 @@
+<div class="container">
+  <h1>Liste des étudiants - Groupe {{ groupeId }}</h1>
+
+  <div class="controls">
+    <form [formGroup]="coursForm" class="cours-selector">
+      <label for="cours">Sélectionner un cours :</label>
+      <select id="cours" formControlName="coursId" (change)="onCoursChange()">
+        <option *ngFor="let c of myCourses" [value]="c.id">{{ c.code }} - {{ c.title }}</option>
+      </select>
+    </form>
+
+    <button class="btn btn-secondary" (click)="backToDashboard()">Retour au Dashboard</button>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="loading" class="loading">Chargement...</div>
+
+  <div *ngIf="!loading && data" class="content">
+    <table class="students-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>DS</th>
+          <th>Examen</th>
+          <th>Moyenne</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of data.etudiants">
+          <td>{{ student.nom }}</td>
+          <td>{{ student.prenom }}</td>
+          <td>{{ student.ds || '-' }}</td>
+          <td>{{ student.examen || '-' }}</td>
+          <td>{{ student.moyenne ? (student.moyenne | number:'1.2-2') : '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="summary">
+      <p><strong>Moyenne générale :</strong> {{ data.moyenneGenerale ? (data.moyenneGenerale | number:'1.2-2') : '-' }}</p>
+      <p><strong>Taux de réussite :</strong> {{ data.tauxReussite | number:'1.2-2' }}%</p>
+    </div>
+
+    <button class="btn btn-primary" (click)="exportPdf()">Exporter en PDF</button>
+  </div>
+</div>
